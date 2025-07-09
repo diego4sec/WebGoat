@@ -1,0 +1,41 @@
+name: Build WebGoat
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the WebGoat repository
+      - name: Checkout WebGoat
+        uses: actions/checkout@v4
+        with:
+          repository: diego4sec/WebGoat
+          ref: main  # Specify a branch, tag, or commit
+
+      # Step 2: Set up a newer JDK (e.g., Java 17 or 20)
+      - name: Set up Java 23
+        uses: actions/setup-java@v4
+        with:
+          java-version: '23'  # Replace with '20' if you want Java 20
+          distribution: 'temurin'  # 'adopt' can also be used
+          cache: maven
+      # check java version
+      - name: Check Java version
+        run: java -version
+      # Step 3: Build the project with Maven
+      - name: Build with Maven
+        run: mvn clean package -B -DskipTests
+
+      # Step 4: Upload the built JAR file as an artifact
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webgoat-jar
+          path: target/*.jar  # Adjust path if JAR is stored elsewhere
