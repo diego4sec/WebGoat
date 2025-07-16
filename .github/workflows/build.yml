@@ -39,7 +39,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       
       #  Step 5: Run Semgrep Security Scan
-      # ✅ Correct Semgrep GitHub Action Step
+      # Correct Semgrep GitHub Action Step
       - name: Run Semgrep Security Scan
         uses: returntocorp/semgrep-action@v1
         with: 
