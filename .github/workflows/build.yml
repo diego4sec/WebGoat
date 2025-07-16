@@ -43,7 +43,6 @@ jobs:
       - name: Run Semgrep Security Scan
         uses: returntocorp/semgrep-action@v1
         with: 
-          config: "p/owasp-top-ten"
           publishToken: ${{ secrets.SEMGREP_APP_TOKEN }} # Optional, only for Semgrep Cloud
         env:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }} # Optional for Semgrep Cloud
