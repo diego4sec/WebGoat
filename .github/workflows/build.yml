@@ -16,7 +16,7 @@ jobs:
     steps:
       # Step 1: Checkout the WebGoat repository
       - name: Checkout WebGoat
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: diego4sec/WebGoat
           ref: main  # Specify a branch, tag, or commit
