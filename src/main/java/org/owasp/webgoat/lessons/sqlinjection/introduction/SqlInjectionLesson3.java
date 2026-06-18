@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Educational lesson demonstrating SQL injection vulnerabilities. This code is intentionally
+ * insecure and must never be deployed in production environments.
+ */
 @RestController
 @AssignmentHints(value = {"SqlStringInjectionHint3-1", "SqlStringInjectionHint3-2"})
 public class SqlInjectionLesson3 implements AssignmentEndpoint {
@@ -38,12 +42,18 @@ public class SqlInjectionLesson3 implements AssignmentEndpoint {
     return injectableQuery(query);
   }
 
+  /**
+   * WARNING: This method contains an intentional SQL injection vulnerability for educational
+   * purposes. DO NOT use this pattern in production code. User input is executed directly as SQL
+   * without parameterization.
+   */
   protected AttackResult injectableQuery(String query) {
     try (Connection connection = dataSource.getConnection()) {
       try (Statement statement =
           connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
         Statement checkStatement =
             connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
+        // INTENTIONALLY VULNERABLE: Direct execution of user input for SQL injection training
         statement.executeUpdate(query);
         ResultSet results =
             checkStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
