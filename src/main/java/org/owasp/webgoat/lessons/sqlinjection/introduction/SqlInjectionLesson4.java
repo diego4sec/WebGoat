@@ -22,12 +22,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.regex.Pattern;
+
 @RestController
 @AssignmentHints(
     value = {"SqlStringInjectionHint4-1", "SqlStringInjectionHint4-2", "SqlStringInjectionHint4-3"})
 public class SqlInjectionLesson4 implements AssignmentEndpoint {
 
   private final LessonDataSource dataSource;
+  private static final Pattern ALLOWED_QUERY = Pattern.compile("^ALTER\\s+TABLE\\s+employees\\s+ADD\\s+phone\\s+varchar\\(\\d+\\)$", Pattern.CASE_INSENSITIVE);
 
   public SqlInjectionLesson4(LessonDataSource dataSource) {
     this.dataSource = dataSource;
@@ -43,6 +46,9 @@ public class SqlInjectionLesson4 implements AssignmentEndpoint {
     try (Connection connection = dataSource.getConnection()) {
       try (Statement statement =
           connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
+        if (!ALLOWED_QUERY.matcher(query.trim()).matches()) {
+          return failed(this).output("Invalid query format. Only ALTER TABLE employees ADD phone varchar(n) is allowed.").build();
+        }
         statement.executeUpdate(query);
         connection.commit();
         ResultSet results = statement.executeQuery("SELECT phone from employees;");
