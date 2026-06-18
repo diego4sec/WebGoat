@@ -39,20 +39,22 @@ public class SqlInjectionLesson2 implements AssignmentEndpoint {
 
   @PostMapping("/SqlInjection/attack2")
   @ResponseBody
-  public AttackResult completed(@RequestParam String query) {
-    return injectableQuery(query);
+  public AttackResult completed(@RequestParam String department) {
+    return injectableQuery(department);
   }
 
-  protected AttackResult injectableQuery(String query) {
+  protected AttackResult injectableQuery(String department) {
     try (var connection = dataSource.getConnection()) {
-      Statement statement = connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
-      ResultSet results = statement.executeQuery(query);
+      String sql = "SELECT * FROM employees WHERE department = ?";
+      PreparedStatement statement = connection.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY);
+      statement.setString(1, department);
+      ResultSet results = statement.executeQuery();
       StringBuilder output = new StringBuilder();
 
       results.first();
 
       if (results.getString("department").equals("Marketing")) {
-        output.append("<span class='feedback-positive'>" + query + "</span>");
+        output.append("<span class='feedback-positive'>Query executed with department: " + department + "</span>");
         output.append(SqlInjectionLesson8.generateTable(results));
         return success(this).feedback("sql-injection.2.success").output(output.toString()).build();
       } else {
